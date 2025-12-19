@@ -76,6 +76,13 @@ export interface FigmaConfig {
   fileUrl: string;
 }
 
+/**
+ * 扩展的 Figma 配置接口（包含 nodeId）
+ */
+export interface ExtendedFigmaConfig extends FigmaConfig {
+  nodeId?: string;
+}
+
 // ==================== 样式提取相关类型 ====================
 
 /**

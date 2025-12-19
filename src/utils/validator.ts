@@ -73,3 +73,27 @@ export function validateNodeId(nodeId?: string): string | undefined {
   // 统一将 "-" 转换为 ":"
   return nodeId.replace(/-/g, ":");
 }
+
+/**
+ * 从 Figma URL 中提取 node ID
+ * @param url - Figma 文件 URL
+ * @returns 节点 ID，如果没有则返回 undefined
+ */
+export function extractNodeIdFromUrl(
+  url: string | undefined
+): string | undefined {
+  if (!url) {
+    return undefined;
+  }
+
+  // 匹配 node-id 参数：node-id=123-456 或 node-id=123:456
+  const nodeIdPattern = /[?&]node-id=([0-9-:]+)/;
+  const match = url.match(nodeIdPattern);
+
+  if (match && match[1]) {
+    // 将 - 转换为 :
+    return match[1].replace(/-/g, ":");
+  }
+
+  return undefined;
+}

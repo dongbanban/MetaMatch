@@ -57,86 +57,57 @@ export class MetaMatch {
   }
 
   /**
-   * 获取文件节点信息
+   * 获取节点样式信息
    */
-  async fetchFileNodes(nodeId?: string): Promise<void> {
+  async fetchNodeStyles(cmdNodeId?: string): Promise<void> {
     if (!this.client) {
       throw new Error("MetaMatch 未初始化，请先调用 initialize()");
     }
 
     try {
       const config = configManager.getConfig();
-      logger.info("=== 开始获取 Figma 节点信息 ===");
+
+      // 优先使用命令行参数，其次使用配置中的 nodeId
+      const nodeId = cmdNodeId || config.nodeId;
+
+      if (!nodeId) {
+        throw new Error(
+          "未指定节点 ID。请在 URL 中添加 node-id 参数，或通过命令行参数指定。"
+        );
+      }
+
+      logger.info("=== 开始获取 Figma 节点样式 ===");
       logger.info(`文件 URL: ${config.fileUrl}`);
       logger.info(`文件 ID: ${config.fileId}`);
 
-      if (nodeId) {
-        // 获取特定节点
-        const validatedNodeId = validateNodeId(nodeId);
-        if (!validatedNodeId) {
-          throw new Error("节点 ID 无效");
-        }
-
-        logger.info(`节点 ID: ${validatedNodeId}\n`);
-
-        const node = await this.client.getNode(config.fileId, validatedNodeId);
-
-        // 提取样式信息
-        logger.info("正在提取节点样式信息...");
-        const nodeStyles = styleExtractor.extractNodeStyles(node);
-
-        const metadata = {
-          fileId: config.fileId,
-          fileName: node.name,
-          lastModified: new Date().toISOString(),
-          version: "unknown",
-          thumbnailUrl: "",
-          fetchedAt: new Date().toISOString(),
-        };
-
-        const savedPath = await this.storage.saveNodeStyles(
-          metadata,
-          nodeStyles
-        );
-
-        logger.success("\n=== 节点样式信息获取完成 ===");
-        logger.info(`节点名称: ${node.name}`);
-        logger.info(`节点类型: ${node.type}`);
-        logger.info(`保存位置: ${savedPath}`);
-      } else {
-        // 获取整个文件
-        logger.info("获取整个文件的样式信息\n");
-
-        const fileResponse = await this.client.getFile(config.fileId);
-
-        // 提取样式信息
-        logger.info("正在提取文件样式信息...");
-        const fileStyles = styleExtractor.extractNodeStyles(
-          fileResponse.document
-        );
-
-        const metadata = this.client.extractMetadata(
-          config.fileId,
-          fileResponse
-        );
-        const savedPath = await this.storage.saveFileStyles(
-          metadata,
-          fileStyles,
-          fileResponse.components,
-          fileResponse.styles
-        );
-
-        logger.success("\n=== 文件样式信息获取完成 ===");
-        logger.info(`文件名称: ${fileResponse.name}`);
-        logger.info(`最后修改: ${fileResponse.lastModified}`);
-        logger.info(`版本: ${fileResponse.version}`);
-        logger.info(`保存位置: ${savedPath}`);
+      const validatedNodeId = validateNodeId(nodeId);
+      if (!validatedNodeId) {
+        throw new Error("节点 ID 无效");
       }
 
-      // 显示统计信息
-      this.displayNodeStatistics(
-        nodeId ? undefined : await this.countNodes(config.fileId)
-      );
+      logger.info(`节点 ID: ${validatedNodeId}\n`);
+
+      const node = await this.client.getNode(config.fileId, validatedNodeId);
+
+      // 提取样式信息
+      logger.info("正在提取节点样式信息...");
+      const nodeStyles = styleExtractor.extractNodeStyles(node);
+
+      const metadata = {
+        fileId: config.fileId,
+        fileName: node.name,
+        lastModified: new Date().toISOString(),
+        version: "unknown",
+        thumbnailUrl: "",
+        fetchedAt: new Date().toISOString(),
+      };
+
+      const savedPath = await this.storage.saveNodeStyles(metadata, nodeStyles);
+
+      logger.success("\n=== 节点样式信息获取完成 ===");
+      logger.info(`节点名称: ${node.name}`);
+      logger.info(`节点类型: ${node.type}`);
+      logger.info(`保存位置: ${savedPath}`);
     } catch (error) {
       logger.error(
         "获取节点信息失败",
@@ -147,49 +118,12 @@ export class MetaMatch {
   }
 
   /**
-   * 统计节点数量
-   */
-  private async countNodes(fileId: string): Promise<number> {
-    if (!this.client) return 0;
-
-    try {
-      const fileResponse = await this.client.getFile(fileId);
-      return this.countNodesRecursive(fileResponse.document);
-    } catch {
-      return 0;
-    }
-  }
-
-  /**
-   * 递归统计节点数量
-   */
-  private countNodesRecursive(node: any): number {
-    let count = 1;
-    if (node.children && Array.isArray(node.children)) {
-      for (const child of node.children) {
-        count += this.countNodesRecursive(child);
-      }
-    }
-    return count;
-  }
-
-  /**
-   * 显示统计信息
-   */
-  private displayNodeStatistics(totalNodes?: number): void {
-    if (totalNodes !== undefined) {
-      logger.info(`总节点数: ${totalNodes}`);
-    }
-    logger.info(`数据目录: ${this.storage.getOutputDir()}`);
-  }
-
-  /**
    * 运行主流程
    */
   async run(nodeId?: string): Promise<void> {
     try {
       await this.initialize();
-      await this.fetchFileNodes(nodeId);
+      await this.fetchNodeStyles(nodeId);
     } catch (error) {
       logger.error("执行失败", error instanceof Error ? error : undefined);
       process.exit(1);
