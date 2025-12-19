@@ -16,8 +16,9 @@
 3. 通过预定义的 Figma 配置项获取节点信息，需要满足如下功能。
    - 校验是否成功配置 Personal access tokens 和 Figma File Url
    - 调用 Figma Api 获取 Figma 节点的全部信息，并且将节点信息保存到 MetaMatch 项目中
-4. Figma Api 的调用必须使用 Personal access tokens 的方式进行权限认证，支持配置。
-5. 可以正确处理各类异常失败的情况并给出提示。
+4. Figma Api 的调用必须使用 Personal access tokens 的方式进行权限认证，支持配置
+5. 可以正确处理各类异常失败的情况并给出提示
+6. 所有的类型定义都集中在 `src/types.ts` 文件中
 
 **语言要求：**
 

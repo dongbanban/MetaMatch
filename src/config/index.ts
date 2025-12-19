@@ -44,7 +44,6 @@ class ConfigManager {
       };
 
       logger.success("配置验证成功");
-      logger.info(`File ID: ${fileId}`);
       if (nodeId) {
         logger.info(`Node ID: ${nodeId} (从 URL 自动提取)`);
       }

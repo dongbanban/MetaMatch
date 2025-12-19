@@ -11,7 +11,6 @@ import {
   FigmaFileResponse,
   FigmaNode,
   FigmaNodeOptions,
-  FigmaFileMetadata,
   FigmaErrorResponse,
 } from "../types.js";
 
@@ -192,22 +191,5 @@ export class FigmaClient {
       }
       return false;
     }
-  }
-
-  /**
-   * 提取文件元数据
-   */
-  extractMetadata(
-    fileId: string,
-    fileResponse: FigmaFileResponse
-  ): FigmaFileMetadata {
-    return {
-      fileId,
-      fileName: fileResponse.name,
-      lastModified: fileResponse.lastModified,
-      version: fileResponse.version,
-      thumbnailUrl: fileResponse.thumbnailUrl,
-      fetchedAt: new Date().toISOString(),
-    };
   }
 }

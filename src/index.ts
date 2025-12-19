@@ -76,16 +76,11 @@ export class MetaMatch {
         );
       }
 
-      logger.info("=== 开始获取 Figma 节点样式 ===");
-      logger.info(`文件 URL: ${config.fileUrl}`);
-      logger.info(`文件 ID: ${config.fileId}`);
-
+      logger.info("开始获取 Figma 节点样式");
       const validatedNodeId = validateNodeId(nodeId);
       if (!validatedNodeId) {
         throw new Error("节点 ID 无效");
       }
-
-      logger.info(`节点 ID: ${validatedNodeId}\n`);
 
       const node = await this.client.getNode(config.fileId, validatedNodeId);
 
@@ -97,17 +92,12 @@ export class MetaMatch {
         fileId: config.fileId,
         fileName: node.name,
         lastModified: new Date().toISOString(),
-        version: "unknown",
-        thumbnailUrl: "",
         fetchedAt: new Date().toISOString(),
       };
 
-      const savedPath = await this.storage.saveNodeStyles(metadata, nodeStyles);
+      await this.storage.saveNodeStyles(metadata, nodeStyles);
 
       logger.success("\n=== 节点样式信息获取完成 ===");
-      logger.info(`节点名称: ${node.name}`);
-      logger.info(`节点类型: ${node.type}`);
-      logger.info(`保存位置: ${savedPath}`);
     } catch (error) {
       logger.error(
         "获取节点信息失败",

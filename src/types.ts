@@ -60,8 +60,6 @@ export interface FigmaFileMetadata {
   fileId: string;
   fileName: string;
   lastModified: string;
-  version: string;
-  thumbnailUrl: string;
   fetchedAt: string;
 }
 
