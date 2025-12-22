@@ -8,7 +8,8 @@ import * as fs from "fs/promises";
 import * as path from "path";
 import { StorageError } from "../utils/errors.js";
 import { logger } from "../utils/logger.js";
-import { FigmaFileMetadata, NodeStyleInfo, StoredStyleData } from "../types.js";
+import { FigmaFileMetadata, NodeStyleInfo } from "../types.js";
+import { processStyles } from "../process-styles.js";
 
 /**
  * 存储管理类
@@ -59,6 +60,18 @@ export class StorageManager {
       await fs.writeFile(filepath, JSON.stringify(data, null, 2), "utf-8");
 
       logger.success(`节点数据已保存到: ${filepath}`);
+
+      // 自动执行 CSS 生成
+      try {
+        logger.info("开始自动生成 CSS 文件...");
+        processStyles(filepath);
+      } catch (error) {
+        logger.error(
+          `CSS 生成失败: ${error instanceof Error ? error.message : "未知错误"}`
+        );
+        // 不抛出错误，避免影响主流程
+      }
+
       return filepath;
     } catch (error) {
       throw new StorageError(

@@ -247,3 +247,19 @@ export interface StoredStyleData {
   figmaComponents?: Record<string, any>;
   figmaStyles?: Record<string, any>;
 }
+
+// ==================== CSS 生成相关类型 ====================
+
+/**
+ * 样式节点 - 用于 CSS 生成
+ */
+export interface StyleNode {
+  /** 节点 ID */
+  id: string;
+  /** 节点名称 */
+  name: string;
+  /** 第一层级的根节点 ID */
+  rootId: string;
+  /** 完整的样式对象 */
+  styles: any;
+}

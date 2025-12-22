@@ -11,7 +11,7 @@ dist/
 
 # 数据目录
 data/
-Result/
+css/
 
 # 日志
 *.log
