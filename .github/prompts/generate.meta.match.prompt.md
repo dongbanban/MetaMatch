@@ -22,6 +22,7 @@
 6. 所有的类型定义都集中在 `src/types.ts` 文件中
 
 ## figma节点信息处理逻辑
+
 根据保存下来的 json 文件，进行以下操作：
 1. 根据 children 字段递归识别 styles 属性下的所有 id 和 name 属性，为每一个 id 创建一个 css file，命名规则为 figma_[id]_[name].css
 2. 根据上述识别逻辑，精准识别每一层的全部样式属性，classname 命名为 .figma_[id]_[name]_class，并写入对应的 figma_[id]_[name].css文件中，
