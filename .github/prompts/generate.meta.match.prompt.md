@@ -13,7 +13,7 @@
 
 1. 清除当前项目中的全部代码逻辑，完全重构本项目
 2. 代码必须符合 TypeScript 和 Vite 的最佳实践，并且结构清晰，易于维护
-3. 通过预定义的 Figma 配置项获取节点信息，需要满足如下功能。
+3. 通过预定义的 Figma 配置项获取节点信息，需要满足如下功能:
    - 校验是否成功配置 Personal access tokens 和 Figma File Url
    - 调用 Figma Api 获取 Figma 节点的全部信息，并且将节点信息保存到 MetaMatch 根项目下的 data 目录
    - 根据下述节点处理逻辑生成节点完整的 css 文件并保存到  MetaMatch 根项目根目录下的 css 目录
